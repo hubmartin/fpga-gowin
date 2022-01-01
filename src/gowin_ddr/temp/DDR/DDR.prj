@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE gowin-synthesis-project>
+<Project>
+    <Version>beta</Version>
+    <Device id="GW1NR-9" package="QFN88" speed="6" partNumber="GW1NR-LV9QN88C6/I5"/>
+    <FileList>
+        <File path="/home/martin/dev/fpga/gowin/Gowin_V1.9.8_linux/IDE/ipcore/DDR/data/ddr.v" type="verilog"/>
+    </FileList>
+    <OptionList>
+        <Option type="disable_insert_pad" value="1"/>
+        <Option type="dsp_balance" value="1"/>
+        <Option type="include_path" value="/home/martin/dev/fpga/gowin/Gowin_V1.9.8_linux/IDE/ipcore/DDR/data"/>
+        <Option type="include_path" value="/home/martin/dev/fpga/gowin/projects/8bit_counter/src/gowin_ddr/temp/DDR"/>
+        <Option type="output_file" value="gowin_ddr.vg"/>
+        <Option type="output_template" value="gowin_ddr_tmp.v"/>
+        <Option type="ram_balance" value="1"/>
+        <Option type="ram_rw_check" value="1"/>
+        <Option type="verilog_language" value="sysv-2017"/>
+    </OptionList>
+</Project>

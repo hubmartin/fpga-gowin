@@ -1,0 +1,51 @@
+//
+//Written by GowinSynthesis
+//Product Version "GowinSynthesis V1.9.8"
+//Sat Jan  1 21:47:30 2022
+
+//Source file index table:
+//file0 "\/home/martin/dev/fpga/gowin/Gowin_V1.9.8_linux/IDE/ipcore/DDR/data/ddr.v"
+`timescale 100 ps/100 ps
+module Gowin_DDR (
+  din,
+  fclk,
+  pclk,
+  reset,
+  q
+)
+;
+input [6:0] din;
+input fclk;
+input pclk;
+input reset;
+output [0:0] q;
+wire [0:0] ddr_inst_o;
+wire VCC;
+wire GND;
+  OBUF \obuf_gen[0].obuf_inst  (
+    .O(q[0]),
+    .I(ddr_inst_o[0]) 
+);
+  OVIDEO \ovideo_gen[0].ovideo_inst  (
+    .Q(ddr_inst_o[0]),
+    .D6(din[6]),
+    .D5(din[5]),
+    .D4(din[4]),
+    .D3(din[3]),
+    .D2(din[2]),
+    .D1(din[1]),
+    .D0(din[0]),
+    .PCLK(pclk),
+    .FCLK(fclk),
+    .RESET(reset) 
+);
+  VCC VCC_cZ (
+    .V(VCC)
+);
+  GND GND_cZ (
+    .G(GND)
+);
+  GSR GSR (
+    .GSRI(VCC) 
+);
+endmodule /* Gowin_DDR */

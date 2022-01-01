@@ -1,0 +1,32 @@
+//Copyright (C)2014-2021 Gowin Semiconductor Corporation.
+//All rights reserved. 
+//File Title: Physical Constraints file
+//GOWIN Version: 1.9.8
+//Part Number: GW1NR-LV9QN88C6/I5
+//Device: GW1NR-9
+//Created Time: Sat 01 01 22:02:20 2022
+
+IO_LOC "o_ddr" 36;
+IO_PORT "o_ddr" PULL_MODE=UP DRIVE=8;
+IO_LOC "o_clk" 37;
+IO_PORT "o_clk" PULL_MODE=UP DRIVE=8;
+IO_LOC "o_led[7]" 79;
+IO_PORT "o_led[7]" PULL_MODE=UP DRIVE=8;
+IO_LOC "o_led[6]" 80;
+IO_PORT "o_led[6]" PULL_MODE=UP DRIVE=8;
+IO_LOC "o_led[5]" 81;
+IO_PORT "o_led[5]" PULL_MODE=UP DRIVE=8;
+IO_LOC "o_led[4]" 82;
+IO_PORT "o_led[4]" PULL_MODE=UP DRIVE=8;
+IO_LOC "o_led[3]" 83;
+IO_PORT "o_led[3]" PULL_MODE=UP DRIVE=8;
+IO_LOC "o_led[2]" 84;
+IO_PORT "o_led[2]" PULL_MODE=UP DRIVE=8;
+IO_LOC "o_led[1]" 85;
+IO_PORT "o_led[1]" PULL_MODE=UP DRIVE=8;
+IO_LOC "o_led[0]" 86;
+IO_PORT "o_led[0]" PULL_MODE=UP DRIVE=8;
+IO_LOC "i_resetn" 77;
+IO_PORT "i_resetn" PULL_MODE=UP;
+IO_LOC "i_clk" 63;
+IO_PORT "i_clk" IO_TYPE=LVTTL33 PULL_MODE=UP;
