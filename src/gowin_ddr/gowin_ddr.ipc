@@ -8,7 +8,7 @@ version=1.0
 
 [Config]
 CLKDIV=false
-DATA_WIDTH=1
+DATA_WIDTH=6
 DDR_MODE=Output
 DELAY_DIRECTION=Input
 DELAY_MODE=None

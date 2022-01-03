@@ -2,7 +2,7 @@
 //All rights reserved.
 //File Title: Post-PnR Simulation Model file
 //GOWIN Version: V1.9.8
-//Created Time: Sat Jan  1 21:47:30 2022
+//Created Time: Mon Jan  3 22:05:15 2022
 
 module Gowin_DDR(
 	din,
@@ -11,18 +11,18 @@ module Gowin_DDR(
 	reset,
 	q
 );
-input [6:0] din;
+input [41:0] din;
 input fclk;
 input pclk;
 input reset;
-output [0:0] q;
+output [5:0] q;
 wire GND;
 wire VCC;
-wire [0:0] ddr_inst_o;
-wire [6:0] din;
+wire [5:0] ddr_inst_o;
+wire [41:0] din;
 wire fclk;
 wire pclk;
-wire [0:0] q;
+wire [5:0] q;
 wire reset;
 VCC VCC_cZ (
   .V(VCC)
@@ -37,14 +37,34 @@ OBUF \obuf_gen[0].obuf_inst  (
 	.I(ddr_inst_o[0]),
 	.O(q[0])
 );
+OBUF \obuf_gen[1].obuf_inst  (
+	.I(ddr_inst_o[1]),
+	.O(q[1])
+);
+OBUF \obuf_gen[2].obuf_inst  (
+	.I(ddr_inst_o[2]),
+	.O(q[2])
+);
+OBUF \obuf_gen[3].obuf_inst  (
+	.I(ddr_inst_o[3]),
+	.O(q[3])
+);
+OBUF \obuf_gen[4].obuf_inst  (
+	.I(ddr_inst_o[4]),
+	.O(q[4])
+);
+OBUF \obuf_gen[5].obuf_inst  (
+	.I(ddr_inst_o[5]),
+	.O(q[5])
+);
 OVIDEO \ovideo_gen[0].ovideo_inst  (
 	.D0(din[0]),
-	.D1(din[1]),
-	.D2(din[2]),
-	.D3(din[3]),
-	.D4(din[4]),
-	.D5(din[5]),
-	.D6(din[6]),
+	.D1(din[6]),
+	.D2(din[12]),
+	.D3(din[18]),
+	.D4(din[24]),
+	.D5(din[30]),
+	.D6(din[36]),
 	.PCLK(pclk),
 	.FCLK(fclk),
 	.RESET(reset),
@@ -52,4 +72,79 @@ OVIDEO \ovideo_gen[0].ovideo_inst  (
 );
 defparam \ovideo_gen[0].ovideo_inst .GSREN="false";
 defparam \ovideo_gen[0].ovideo_inst .LSREN="true";
+OVIDEO \ovideo_gen[1].ovideo_inst  (
+	.D0(din[1]),
+	.D1(din[7]),
+	.D2(din[13]),
+	.D3(din[19]),
+	.D4(din[25]),
+	.D5(din[31]),
+	.D6(din[37]),
+	.PCLK(pclk),
+	.FCLK(fclk),
+	.RESET(reset),
+	.Q(ddr_inst_o[1])
+);
+defparam \ovideo_gen[1].ovideo_inst .GSREN="false";
+defparam \ovideo_gen[1].ovideo_inst .LSREN="true";
+OVIDEO \ovideo_gen[2].ovideo_inst  (
+	.D0(din[2]),
+	.D1(din[8]),
+	.D2(din[14]),
+	.D3(din[20]),
+	.D4(din[26]),
+	.D5(din[32]),
+	.D6(din[38]),
+	.PCLK(pclk),
+	.FCLK(fclk),
+	.RESET(reset),
+	.Q(ddr_inst_o[2])
+);
+defparam \ovideo_gen[2].ovideo_inst .GSREN="false";
+defparam \ovideo_gen[2].ovideo_inst .LSREN="true";
+OVIDEO \ovideo_gen[3].ovideo_inst  (
+	.D0(din[3]),
+	.D1(din[9]),
+	.D2(din[15]),
+	.D3(din[21]),
+	.D4(din[27]),
+	.D5(din[33]),
+	.D6(din[39]),
+	.PCLK(pclk),
+	.FCLK(fclk),
+	.RESET(reset),
+	.Q(ddr_inst_o[3])
+);
+defparam \ovideo_gen[3].ovideo_inst .GSREN="false";
+defparam \ovideo_gen[3].ovideo_inst .LSREN="true";
+OVIDEO \ovideo_gen[4].ovideo_inst  (
+	.D0(din[4]),
+	.D1(din[10]),
+	.D2(din[16]),
+	.D3(din[22]),
+	.D4(din[28]),
+	.D5(din[34]),
+	.D6(din[40]),
+	.PCLK(pclk),
+	.FCLK(fclk),
+	.RESET(reset),
+	.Q(ddr_inst_o[4])
+);
+defparam \ovideo_gen[4].ovideo_inst .GSREN="false";
+defparam \ovideo_gen[4].ovideo_inst .LSREN="true";
+OVIDEO \ovideo_gen[5].ovideo_inst  (
+	.D0(din[5]),
+	.D1(din[11]),
+	.D2(din[17]),
+	.D3(din[23]),
+	.D4(din[29]),
+	.D5(din[35]),
+	.D6(din[41]),
+	.PCLK(pclk),
+	.FCLK(fclk),
+	.RESET(reset),
+	.Q(ddr_inst_o[5])
+);
+defparam \ovideo_gen[5].ovideo_inst .GSREN="false";
+defparam \ovideo_gen[5].ovideo_inst .LSREN="true";
 endmodule

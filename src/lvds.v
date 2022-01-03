@@ -9,37 +9,36 @@ https://www.beyondinfinite.com/lcd/Library/LG-Philips/LP171WU3-TLB3.pdf
 
 */
 
-module lvds (button, clk_in, 
+module lvds (i_clk_fast, i_clk_div_3_5, 
 
-	rx, rx_even, clk_out,
+	tx_odd, tx_even,
 	x,y,
-	color, color_even,
-	o_slot
+	color, color_even, i_resetn,
+
+    o_q,
+    //o_debug
 );
 
-	input button;
-   input clk_in;
-	//output [7:0] led;
-	
-	output [2:0] rx;
-	output [2:0] rx_even;
-	output clk_out;
+    input i_clk_fast;
+    input i_clk_div_3_5;
+    input [23:0] color, color_even;
+
+    input i_resetn;
+
+	output [2:0] tx_odd;
+	output [2:0] tx_even;
 	
 	output [11:0] x;
 	output [11:0] y;
-	input [23:0] color, color_even;
-	
-	output [2:0] o_slot;
-	
-   //reg [7:0] count = 8'b0;
+		
+    output [5:0] o_q;
+    //output [5:0] o_debug;
 
-   //assign led = count; //{div[3], div[2], div[1], div[0]} == 4'b0 ? count : 6'b0 ;
-
-   // LVDS
-   localparam [6:0] ckdata = 7'b1100011;
-   wire [0:6] RX0DATA, RX0EDATA;
-   wire [0:6] RX1DATA, RX1EDATA;
-   wire [0:6] RX2DATA, RX2EDATA;
+    // LVDS
+    localparam [6:0] ckdata = 7'b1100011;
+    wire [0:6] RX0DATA, RX0EDATA;
+    wire [0:6] RX1DATA, RX1EDATA;
+    wire [0:6] RX2DATA, RX2EDATA;
 
 	localparam [11:0] hfront = 24;
 	localparam [11:0] hback = 40;
@@ -57,31 +56,24 @@ module lvds (button, clk_in,
 	wire [11:0] x;
 	wire [11:0] y;
 
-   reg [5:0] red = 6'b0;
-   reg [5:0] green = 6'b0;
-   reg [5:0] blue = 6'b0;
-	
+    reg [5:0] red = 6'b0;
+    reg [5:0] green = 6'b0;
+    reg [5:0] blue = 6'b0;
+
 	reg [5:0] red_even = 6'b0;
-   reg [5:0] green_even = 6'b0;
-   reg [5:0] blue_even = 6'b0;
+    reg [5:0] green_even = 6'b0;
+    reg [5:0] blue_even = 6'b0;
 
-   reg [17:0] nextColor = 18'b0;
-	reg [17:0] nextColor_even = 18'b0;
+    reg [17:0] nextColor = 18'b0;
+    reg [17:0] nextColor_even = 18'b0;
 
-   reg [2:0] slot = 0;
+    reg hsync = 0;
+    reg vsync = 0;
 
-   reg hsync = 0;
-   reg vsync = 0;
+    wire dataenable;
 
-   wire dataenable;
-
-   assign dataenable = vsync & hsync;
+    assign dataenable = vsync & hsync;
 		
-	// CLOCK
-   assign clk_out = ckdata[slot];
-	
-	assign o_slot = slot;
-
 	//
 	// ODD DATA
 	//
@@ -99,10 +91,6 @@ module lvds (button, clk_in,
 	assign RX0DATA[0] = green[0];
 	assign RX0DATA[1:6] = red[5:0];
 	
-	assign rx[0] = RX0DATA[slot];
-	assign rx[1] = RX1DATA[slot];
-	assign rx[2] = RX2DATA[slot];
-	
 	//
 	// EVEN DATA
 	//
@@ -117,24 +105,29 @@ module lvds (button, clk_in,
 	assign RX0EDATA[0] = green_even[0];
 	assign RX0EDATA[1:6] = red_even[5:0];
 	
-	assign rx_even[0] = RX0EDATA[slot];
-	assign rx_even[1] = RX1EDATA[slot];
-	assign rx_even[2] = RX2EDATA[slot];
-	
 	assign x = (hcurrent - hfront >= 0) & (hcurrent - hfront < hactive) ? hcurrent - hfront : 0;
 	assign y = (vcurrent - vfront >= 0) & (vcurrent - vfront < vactive) ? vcurrent - vfront : 0;
 
-/*
-	always @ (slot)
-	begin
-		if(slot == 5)
-		begin
-			nextColor <= {  color[15:10], color[23:18], color[7:2]};
-		end
-	end*/
+    //wire [41:0] din_i = {7'b1010101, 7'b1010101,7'b1010101,7'b1010101,7'b1010101,7'b1010101};
+
+    assign din_i = {RX0EDATA, RX1EDATA, RX2EDATA, RX0DATA, RX1DATA, RX2DATA};
+
+   /* wire [5:0] q_o;
+
+    assign tx_odd = q_o[2:0];
+    assign tx_even = q_o[5:3];*/
+
+	Gowin_DDR gearbox_i(
+		.din(din_i), //input [41:0] din
+		.fclk(i_clk_fast), //input fclk
+		.pclk(i_clk_div_3_5), //input pclk
+		.reset(~i_resetn), //input reset
+		.q(o_q) //output [5:0] q
+        //.o_debug(o_debug)
+	);
 
 	// Slot increment
-	always @ (posedge clk_in)
+	always @ (posedge i_clk_div_3_5)
 	begin
 		
 		if(hcurrent < hfront | (hcurrent >= (hfront + hactive)))
@@ -146,45 +139,35 @@ module lvds (button, clk_in,
 			vsync <= 0;
 		else
 			vsync <= 1;
-			
-		if(slot == 5)
-		begin
-			nextColor <= {  color[15:10], color[23:18], color[7:2]};
-			nextColor_even <= {  color_even[15:10], color_even[23:18], color_even[7:2]};
-		end
+		
+        //din_i <= {RX0EDATA, RX1EDATA, RX2EDATA, RX0DATA, RX1DATA, RX2DATA};	
 
-		if(slot == 6)
-		begin
-			slot <= 0;
-			
-			green <= dataenable ? nextColor[17:12] : 8'b0;
-			red <= dataenable ? nextColor[11:6] : 8'b0;
-			blue <= dataenable ? nextColor[5:0] : 8'b0;
-			
-			green_even <= dataenable ? nextColor_even[17:12] : 8'b0;
-			red_even <= dataenable ? nextColor_even[11:6] : 8'b0;
-			blue_even <= dataenable ? nextColor_even[5:0] : 8'b0;
-
+		nextColor <= {  color[15:10], color[23:18], color[7:2]};
+		nextColor_even <= {  color_even[15:10], color_even[23:18], color_even[7:2]};
 
 			
-			if(hcurrent == htotal)
-			begin
-				hcurrent <= 0;
+        green <= dataenable ? nextColor[17:12] : 8'b0;
+        red <= dataenable ? nextColor[11:6] : 8'b0;
+        blue <= dataenable ? nextColor[5:0] : 8'b0;
 
-				if(vcurrent == vtotal)
-					vcurrent <= 0;
-				else
-					vcurrent <= vcurrent + 1;
-			end
-			else
-			begin
-				hcurrent <= hcurrent + 1;
-			end
-		end
-		else
-		begin
-			slot <= slot + 1;
-		end
+        green_even <= dataenable ? nextColor_even[17:12] : 8'b0;
+        red_even <= dataenable ? nextColor_even[11:6] : 8'b0;
+        blue_even <= dataenable ? nextColor_even[5:0] : 8'b0;
+
+
+        if(hcurrent == htotal)
+        begin
+            hcurrent <= 0;
+
+            if(vcurrent == vtotal)
+                vcurrent <= 0;
+            else
+                vcurrent <= vcurrent + 1;
+        end
+        else
+        begin
+            hcurrent <= hcurrent + 1;
+        end
 
 
 	end

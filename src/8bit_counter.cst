@@ -4,28 +4,28 @@
 //GOWIN Version: 1.9.8
 //Part Number: GW1NR-LV9QN88C6/I5
 //Device: GW1NR-9
-//Created Time: Sun 01 02 22:48:02 2022
+//Created Time: Mon 01 03 22:47:56 2022
 
-IO_LOC "o_ddr" 36;
-IO_PORT "o_ddr" IO_TYPE=LVCMOS25 PULL_MODE=UP DRIVE=8;
-IO_LOC "slot[2]" 70;
-IO_PORT "slot[2]" PULL_MODE=UP DRIVE=8;
-IO_LOC "slot[1]" 69;
-IO_PORT "slot[1]" PULL_MODE=UP DRIVE=8;
-IO_LOC "slot[0]" 68;
-IO_PORT "slot[0]" PULL_MODE=UP DRIVE=8;
-IO_LOC "o_lvds_even_tx[2]" 27;
-IO_PORT "o_lvds_even_tx[2]" IO_TYPE=LVDS25E PULL_MODE=NONE DRIVE=8;
-IO_LOC "o_lvds_even_tx[1]" 25;
-IO_PORT "o_lvds_even_tx[1]" IO_TYPE=LVDS25E PULL_MODE=NONE DRIVE=8;
-IO_LOC "o_lvds_even_tx[0]" 19;
-IO_PORT "o_lvds_even_tx[0]" IO_TYPE=LVDS25E PULL_MODE=NONE DRIVE=8;
-IO_LOC "o_lvds_tx[2]" 33;
-IO_PORT "o_lvds_tx[2]" IO_TYPE=LVDS25E PULL_MODE=NONE DRIVE=8;
-IO_LOC "o_lvds_tx[1]" 31;
-IO_PORT "o_lvds_tx[1]" IO_TYPE=LVDS25E PULL_MODE=NONE DRIVE=8;
-IO_LOC "o_lvds_tx[0]" 29;
-IO_PORT "o_lvds_tx[0]" IO_TYPE=LVDS25E PULL_MODE=NONE DRIVE=8;
+IO_LOC "o_q[5]" 33;
+IO_PORT "o_q[5]" IO_TYPE=LVDS25E PULL_MODE=NONE DRIVE=8;
+IO_LOC "o_q[4]" 31;
+IO_PORT "o_q[4]" IO_TYPE=LVDS25E PULL_MODE=NONE DRIVE=8;
+IO_LOC "o_q[3]" 29;
+IO_PORT "o_q[3]" IO_TYPE=LVDS25E PULL_MODE=NONE DRIVE=8;
+IO_LOC "o_q[2]" 27;
+IO_PORT "o_q[2]" IO_TYPE=LVDS25E PULL_MODE=NONE DRIVE=8;
+IO_LOC "o_q[1]" 25;
+IO_PORT "o_q[1]" IO_TYPE=LVDS25E PULL_MODE=NONE DRIVE=8;
+IO_LOC "o_q[0]" 19;
+IO_PORT "o_q[0]" IO_TYPE=LVDS25E PULL_MODE=NONE DRIVE=8;
+IO_LOC "o_debug[3]" 71;
+IO_PORT "o_debug[3]" PULL_MODE=UP DRIVE=8;
+IO_LOC "o_debug[2]" 70;
+IO_PORT "o_debug[2]" PULL_MODE=UP DRIVE=8;
+IO_LOC "o_debug[1]" 69;
+IO_PORT "o_debug[1]" PULL_MODE=UP DRIVE=8;
+IO_LOC "o_debug[0]" 68;
+IO_PORT "o_debug[0]" PULL_MODE=UP DRIVE=8;
 IO_LOC "o_lvds_clk" 17;
 IO_PORT "o_lvds_clk" IO_TYPE=LVDS25E PULL_MODE=NONE DRIVE=8;
 IO_LOC "o_clk" 37;
