@@ -4,7 +4,7 @@
 //GOWIN Version: V1.9.8
 //Part Number: GW1NR-LV9QN88C6/I5
 //Device: GW1NR-9
-//Created Time: Sun Jan  2 23:35:21 2022
+//Created Time: Mon Jan  3 22:49:59 2022
 
 module Gowin_rPLL (clkout, clkin);
 
@@ -39,11 +39,11 @@ rPLL rpll_inst (
 
 defparam rpll_inst.FCLKIN = "100";
 defparam rpll_inst.DYN_IDIV_SEL = "false";
-defparam rpll_inst.IDIV_SEL = 0;
+defparam rpll_inst.IDIV_SEL = 19;
 defparam rpll_inst.DYN_FBDIV_SEL = "false";
-defparam rpll_inst.FBDIV_SEL = 1;
+defparam rpll_inst.FBDIV_SEL = 0;
 defparam rpll_inst.DYN_ODIV_SEL = "false";
-defparam rpll_inst.ODIV_SEL = 4;
+defparam rpll_inst.ODIV_SEL = 128;
 defparam rpll_inst.PSDA_SEL = "0000";
 defparam rpll_inst.DYN_DA_EN = "true";
 defparam rpll_inst.DUTYDA_SEL = "1000";
