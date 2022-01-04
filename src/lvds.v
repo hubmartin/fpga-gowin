@@ -10,13 +10,10 @@ https://www.beyondinfinite.com/lcd/Library/LG-Philips/LP171WU3-TLB3.pdf
 */
 
 module lvds (i_clk_fast, i_clk_div_3_5, 
-
 	tx_odd, tx_even,
 	x,y,
 	color, color_even, i_resetn,
-
-    o_q,
-    //o_debug
+    o_q
 );
 
     input i_clk_fast;
@@ -31,7 +28,7 @@ module lvds (i_clk_fast, i_clk_div_3_5,
 	output [11:0] x;
 	output [11:0] y;
 		
-    output [5:0] o_q;
+    output [6:0] o_q;
     //output [5:0] o_debug;
 
     // LVDS
@@ -108,22 +105,24 @@ module lvds (i_clk_fast, i_clk_div_3_5,
 	assign x = (hcurrent - hfront >= 0) & (hcurrent - hfront < hactive) ? hcurrent - hfront : 0;
 	assign y = (vcurrent - vfront >= 0) & (vcurrent - vfront < vactive) ? vcurrent - vfront : 0;
 
-    //wire [41:0] din_i = {7'b1010101, 7'b1010101,7'b1010101,7'b1010101,7'b1010101,7'b1010101};
+    wire [48:0] din_i = {RX0EDATA, RX1EDATA, RX2EDATA, RX0DATA, RX1DATA, RX2DATA, 7'b1100011};
 
-    assign din_i = {RX0EDATA, RX1EDATA, RX2EDATA, RX0DATA, RX1DATA, RX2DATA};
-
-   /* wire [5:0] q_o;
-
-    assign tx_odd = q_o[2:0];
-    assign tx_even = q_o[5:3];*/
-
+    wire [48:0] din_i_remaped = {
+            din_i[0], din_i[7], din_i[14], din_i[21], din_i[28], din_i[35], din_i[42], 
+            din_i[1], din_i[8], din_i[15], din_i[22], din_i[29], din_i[36], din_i[43], 
+            din_i[2], din_i[9], din_i[16], din_i[23], din_i[30], din_i[37], din_i[44], 
+            din_i[3], din_i[10], din_i[17], din_i[24], din_i[31], din_i[38], din_i[45], 
+            din_i[4], din_i[11], din_i[18], din_i[25], din_i[32], din_i[39], din_i[46], 
+            din_i[5], din_i[12], din_i[19], din_i[26], din_i[33], din_i[40], din_i[47], 
+            din_i[6], din_i[13], din_i[20], din_i[27], din_i[34], din_i[41], din_i[48]
+    };
+    
 	Gowin_DDR gearbox_i(
-		.din(din_i), //input [41:0] din
+		.din(din_i_remaped), //input [48:0] din
 		.fclk(i_clk_fast), //input fclk
 		.pclk(i_clk_div_3_5), //input pclk
 		.reset(~i_resetn), //input reset
-		.q(o_q) //output [5:0] q
-        //.o_debug(o_debug)
+		.q(o_q) //output [6:0] q
 	);
 
 	// Slot increment
@@ -140,11 +139,8 @@ module lvds (i_clk_fast, i_clk_div_3_5,
 		else
 			vsync <= 1;
 		
-        //din_i <= {RX0EDATA, RX1EDATA, RX2EDATA, RX0DATA, RX1DATA, RX2DATA};	
-
 		nextColor <= {  color[15:10], color[23:18], color[7:2]};
 		nextColor_even <= {  color_even[15:10], color_even[23:18], color_even[7:2]};
-
 			
         green <= dataenable ? nextColor[17:12] : 8'b0;
         red <= dataenable ? nextColor[11:6] : 8'b0;
