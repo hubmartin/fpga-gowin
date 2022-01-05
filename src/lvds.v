@@ -69,7 +69,7 @@ module lvds (i_clk_fast, i_clk_div_3_5,
 
     wire dataenable;
 
-    assign dataenable = vsync & hsync;
+    
 		
 	//
 	// ODD DATA
@@ -102,8 +102,13 @@ module lvds (i_clk_fast, i_clk_div_3_5,
 	assign RX0EDATA[0] = green_even[0];
 	assign RX0EDATA[1:6] = red_even[5:0];
 	
-	assign x = (hcurrent - hfront >= 0) & (hcurrent - hfront < hactive) ? hcurrent - hfront : 0;
+	//assign x = (hcurrent - hfront >= 0) & (hcurrent - hfront < hactive) ? hcurrent - hfront : 0;
+	//assign y = (vcurrent - vfront >= 0) & (vcurrent - vfront < vactive) ? vcurrent - vfront : 0;
+    assign x = (hcurrent - hfront >= 0) & (hcurrent - hfront < hactive) ? hcurrent - hfront : 0;
 	assign y = (vcurrent - vfront >= 0) & (vcurrent - vfront < vactive) ? vcurrent - vfront : 0;
+
+    //assign dataenable = (hcurrent >= hfront) & (hcurrent < (hactive + hfront)) & (vcurrent >= vfront) & (vcurrent < (vactive + vfront));
+    assign dataenable = vsync & hsync;
 
     wire [48:0] din_i = {RX0EDATA, RX1EDATA, RX2EDATA, RX0DATA, RX1DATA, RX2DATA, 7'b1100011};
 
@@ -130,18 +135,20 @@ module lvds (i_clk_fast, i_clk_div_3_5,
 	begin
 		
 		if(hcurrent < hfront | (hcurrent >= (hfront + hactive)))
+        //if(hcurrent == 0)
 			hsync <= 0;
 		else
 			hsync <= 1;
 
 		if(vcurrent < vfront | (vcurrent >= (vfront + vactive)))
+        //if(vcurrent == 0)
 			vsync <= 0;
 		else
 			vsync <= 1;
 		
 		nextColor <= {  color[15:10], color[23:18], color[7:2]};
 		nextColor_even <= {  color_even[15:10], color_even[23:18], color_even[7:2]};
-			
+
         green <= dataenable ? nextColor[17:12] : 8'b0;
         red <= dataenable ? nextColor[11:6] : 8'b0;
         blue <= dataenable ? nextColor[5:0] : 8'b0;
@@ -149,7 +156,6 @@ module lvds (i_clk_fast, i_clk_div_3_5,
         green_even <= dataenable ? nextColor_even[17:12] : 8'b0;
         red_even <= dataenable ? nextColor_even[11:6] : 8'b0;
         blue_even <= dataenable ? nextColor_even[5:0] : 8'b0;
-
 
         if(hcurrent == htotal)
         begin
