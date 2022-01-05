@@ -42,16 +42,27 @@ lvds my_lvds (
 
 always @(posedge clk_3_5)
 begin
-
+/*
     r_color <= {x[7:0], y[7:0], 8'b00000000};
     r_color_even <= {x[7:0], y[7:0], 8'b00000000};
-  /*
-    if(x < 100)
+*/
+  
+    if(x == 0)
     begin
         r_color <= 24'h0000FF;
         r_color_even <= 24'h0000FF;
     end
-    else if(x < 200)
+    else if(x == 957)
+    begin
+        r_color <= 24'h0000FF;
+        r_color_even <= 24'h0000FF;
+    end
+    else if(y == 1199)
+    begin
+        r_color <= 24'hFF0000;
+        r_color_even <= 24'hFF0000;
+    end
+    else if(y == 0)
     begin
         r_color <= 24'hFF0000;
         r_color_even <= 24'hFF0000;
@@ -61,7 +72,7 @@ begin
         r_color <= 24'h00FF00;
         r_color_even <= 24'h00FF00;
     end
-*/
+
 end
 
 assign o_clk = clk_3_5;
