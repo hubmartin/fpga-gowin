@@ -10,10 +10,11 @@ wire [11:0] x;
 wire [11:0] y;
 wire [23:0] color;
 
-reg [23:0] r_color = 24'h0000FF;
-reg [23:0] r_color_even = 24'h0000FF;
+reg [23:0] r_color = 24'hFFFFFF;
+reg [23:0] r_color_even = 24'hFFFFFF;
 
 wire clk_sys;
+wire clk_3_5;
 
 Gowin_rPLL inst_pll(
     .clkout(clk_sys), //output clkout
@@ -39,6 +40,7 @@ lvds my_lvds (
     .o_q(o_q)
 );
 
+reg [35:0] x_counter = 0;
 
 always @(posedge clk_3_5)
 begin
@@ -46,16 +48,23 @@ begin
     r_color <= {x[7:0], y[7:0], 8'b00000000};
     r_color_even <= {x[7:0], y[7:0], 8'b00000000};
 */
+
+    x_counter <= x_counter + 1;
   
     if(x == 0)
     begin
-        r_color <= 24'h0000FF;
-        r_color_even <= 24'h0000FF;
+        r_color <= 24'hFFFFFF;
+        r_color_even <= 24'hFFFFFF;
     end
-    else if(x == 957)
+    else if(x == x_counter[35:24])
     begin
-        r_color <= 24'h0000FF;
-        r_color_even <= 24'h0000FF;
+        r_color <= 24'hFFFFFF;
+        r_color_even <= 24'hFFFFFF;
+    end
+    else if(x == 959)
+    begin
+        r_color <= 24'hFFFFFF;
+        r_color_even <= 24'hFFFFFF;
     end
     else if(y == 1199)
     begin

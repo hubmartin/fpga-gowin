@@ -37,18 +37,19 @@ module lvds (i_clk_fast, i_clk_div_3_5,
     wire [0:6] RX1DATA, RX1EDATA;
     wire [0:6] RX2DATA, RX2EDATA;
 
-	localparam [11:0] hfront = 24;
-	localparam [11:0] hback = 40;
-	localparam [11:0] hactive = 960;
-	localparam [11:0] htotal = 960+hback;
+    localparam [11:0] h_active = 960;
+	localparam [11:0] h_sync_offset = 24;
+	localparam [11:0] h_sync_width = 16;
+    localparam [11:0] h_blanking = (24 + 16 + 40);
 
-	localparam [11:0] vfront = 3;
-	localparam [11:0] vback = 26;
-	localparam [11:0] vactive = 1200;
-	localparam [11:0] vtotal = 1200+vback;
+	localparam [11:0] v_active = 1200;
+	localparam [11:0] v_sync_offset = 3;
+    localparam [11:0] v_sync_width = 6;
+	localparam [11:0] v_blanking = (3 + 6 + 26);
 
-	reg [11:0] hcurrent = 0;
-	reg [11:0] vcurrent = 0;
+	
+	reg [11:0] h_current = 0;
+	reg [11:0] v_current = 0;
 
 	wire [11:0] x;
 	wire [11:0] y;
@@ -67,9 +68,8 @@ module lvds (i_clk_fast, i_clk_div_3_5,
     reg hsync = 0;
     reg vsync = 0;
 
-    wire dataenable;
-
-    
+    reg dataenable;
+   
 		
 	//
 	// ODD DATA
@@ -101,14 +101,10 @@ module lvds (i_clk_fast, i_clk_div_3_5,
 
 	assign RX0EDATA[0] = green_even[0];
 	assign RX0EDATA[1:6] = red_even[5:0];
-	
-	//assign x = (hcurrent - hfront >= 0) & (hcurrent - hfront < hactive) ? hcurrent - hfront : 0;
-	//assign y = (vcurrent - vfront >= 0) & (vcurrent - vfront < vactive) ? vcurrent - vfront : 0;
-    assign x = (hcurrent - hfront >= 0) & (hcurrent - hfront < hactive) ? hcurrent - hfront : 0;
-	assign y = (vcurrent - vfront >= 0) & (vcurrent - vfront < vactive) ? vcurrent - vfront : 0;
 
-    //assign dataenable = (hcurrent >= hfront) & (hcurrent < (hactive + hfront)) & (vcurrent >= vfront) & (vcurrent < (vactive + vfront));
-    assign dataenable = vsync & hsync;
+    assign x = (h_current < h_active) ? (h_current + 1) : 0;
+    assign y = (v_current < v_active) ? (v_current) : 0;
+
 
     wire [48:0] din_i = {RX0EDATA, RX1EDATA, RX2EDATA, RX0DATA, RX1DATA, RX2DATA, 7'b1100011};
 
@@ -130,45 +126,55 @@ module lvds (i_clk_fast, i_clk_div_3_5,
 		.q(o_q) //output [6:0] q
 	);
 
+    reg dataenable_next;
+
 	// Slot increment
 	always @ (posedge i_clk_div_3_5)
 	begin
 		
-		if(hcurrent < hfront | (hcurrent >= (hfront + hactive)))
-        //if(hcurrent == 0)
+		if(h_current > (h_active + h_sync_offset) & h_current < (h_active + h_sync_offset + h_sync_width))
 			hsync <= 0;
 		else
 			hsync <= 1;
 
-		if(vcurrent < vfront | (vcurrent >= (vfront + vactive)))
-        //if(vcurrent == 0)
+		if(v_current > (v_active + v_sync_offset) & v_current < (v_active + v_sync_offset + v_sync_width))
 			vsync <= 0;
 		else
 			vsync <= 1;
-		
+
+        dataenable_next <= (h_current < h_active) & (v_current < v_active);
+        dataenable <= dataenable_next;
+
+
+
 		nextColor <= {  color[15:10], color[23:18], color[7:2]};
 		nextColor_even <= {  color_even[15:10], color_even[23:18], color_even[7:2]};
 
-        green <= dataenable ? nextColor[17:12] : 8'b0;
-        red <= dataenable ? nextColor[11:6] : 8'b0;
-        blue <= dataenable ? nextColor[5:0] : 8'b0;
+        green <= dataenable_next ? nextColor[17:12] : 8'b0;
+        red <= dataenable_next ? nextColor[11:6] : 8'b0;
+        blue <= dataenable_next ? nextColor[5:0] : 8'b0;
 
-        green_even <= dataenable ? nextColor_even[17:12] : 8'b0;
-        red_even <= dataenable ? nextColor_even[11:6] : 8'b0;
-        blue_even <= dataenable ? nextColor_even[5:0] : 8'b0;
+        green_even <= dataenable_next ? nextColor_even[17:12] : 8'b0;
+        red_even <= dataenable_next ? nextColor_even[11:6] : 8'b0;
+        blue_even <= dataenable_next ? nextColor_even[5:0] : 8'b0;
 
-        if(hcurrent == htotal)
+        if(h_current == (h_active + h_blanking))
         begin
-            hcurrent <= 0;
+            h_current <= 0;
 
-            if(vcurrent == vtotal)
-                vcurrent <= 0;
+            if(v_current == (v_active + v_blanking))
+            begin
+                v_current <= 0;
+            end
             else
-                vcurrent <= vcurrent + 1;
+            begin
+                v_current <= v_current + 1;
+            end
+        
         end
         else
         begin
-            hcurrent <= hcurrent + 1;
+            h_current <= h_current + 1;
         end
 
 
