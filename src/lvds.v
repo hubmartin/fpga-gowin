@@ -114,8 +114,8 @@ module lvds (i_clk_fast, i_clk_div_3_5,
     
 	Gowin_DDR gearbox_i(
 		.din(din_i_remaped), //input [48:0] din
-		.fclk(i_clk_fast), //input fclk
-		.pclk(i_clk_div_3_5), //input pclk
+		.fclk(~i_clk_fast), //input fclk
+		.pclk(~i_clk_div_3_5), //input pclk
 		.reset(~i_resetn), //input reset
 		.q(o_q) //output [6:0] q
 	);
@@ -131,16 +131,16 @@ module lvds (i_clk_fast, i_clk_div_3_5,
     assign nextColor = {  color[13:8], color[21:16], color[5:0]};
     assign nextColor_even = {  color_even[13:8], color_even[21:16], color_even[5:0]};
 
-    assign green = dataenable ? nextColor[17:12] : 8'b0;
     assign red = dataenable ? nextColor[11:6] : 8'b0;
+    assign green = dataenable ? nextColor[17:12] : 8'b0;
     assign blue = dataenable ? nextColor[5:0] : 8'b0;
 
-    assign green_even = dataenable ? nextColor_even[17:12] : 8'b0;
     assign red_even = dataenable ? nextColor_even[11:6] : 8'b0;
+    assign green_even = dataenable ? nextColor_even[17:12] : 8'b0;
     assign blue_even = dataenable ? nextColor_even[5:0] : 8'b0;
 
 	// Slot increment
-	always @ (posedge i_clk_div_3_5)
+	always @ (negedge i_clk_div_3_5)
 	begin
 		
 		//nextColor <= {  color[15:10], color[23:18], color[7:2]};
