@@ -3,7 +3,7 @@
 // reset 77
 module blinky(input i_clk, input i_resetn, output [7:0] o_led, output o_clk,
               output o_lvds_clk,
-            output [5:0] o_debug, output [6:0] o_q
+             output [6:0] o_q
 );
 
 wire [11:0] x;
@@ -31,8 +31,6 @@ lvds my_lvds (
 	.i_clk_fast(clk_sys),
 	.i_clk_div_3_5(clk_3_5),
     .i_resetn(i_resetn),
-	.tx_odd(o_lvds_tx),
-	.tx_even(o_lvds_even_tx),
 	.x(x),
 	.y(y),
 	.color(r_color),
@@ -44,11 +42,11 @@ reg [35:0] x_counter = 0;
 
 always @(posedge clk_3_5)
 begin
-/*
+
     r_color <= {x[7:0], y[7:0], 8'b00000000};
     r_color_even <= {x[7:0], y[7:0], 8'b00000000};
-*/
 
+/*
     x_counter <= x_counter + 1;
   
     if(x == 0)
@@ -56,7 +54,7 @@ begin
         r_color <= 24'hFFFFFF;
         r_color_even <= 24'hFFFFFF;
     end
-    else if(x == x_counter[35:24])
+    else if(x == 4) //x_counter[35:24])
     begin
         r_color <= 24'hFFFFFF;
         r_color_even <= 24'hFFFFFF;
@@ -80,14 +78,13 @@ begin
     begin
         r_color <= 24'h00FF00;
         r_color_even <= 24'h00FF00;
-    end
+    end*/
 
 end
 
 assign o_clk = clk_3_5;
 assign o_lvds_clk = clk_3_5;
 
-assign o_debug[0] = clk_3_5;
 
 reg	[31:0]	counter;
 always @(posedge clk_sys)

@@ -10,7 +10,6 @@ https://www.beyondinfinite.com/lcd/Library/LG-Philips/LP171WU3-TLB3.pdf
 */
 
 module lvds (i_clk_fast, i_clk_div_3_5, 
-	tx_odd, tx_even,
 	x,y,
 	color, color_even, i_resetn,
     o_q
@@ -22,9 +21,6 @@ module lvds (i_clk_fast, i_clk_div_3_5,
 
     input i_resetn;
 
-	output [2:0] tx_odd;
-	output [2:0] tx_even;
-	
 	output [11:0] x;
 	output [11:0] y;
 		
@@ -54,21 +50,21 @@ module lvds (i_clk_fast, i_clk_div_3_5,
 	wire [11:0] x;
 	wire [11:0] y;
 
-    reg [5:0] red = 6'b0;
-    reg [5:0] green = 6'b0;
-    reg [5:0] blue = 6'b0;
+    wire [5:0] red;
+    wire [5:0] green;
+    wire [5:0] blue;
 
-	reg [5:0] red_even = 6'b0;
-    reg [5:0] green_even = 6'b0;
-    reg [5:0] blue_even = 6'b0;
+	wire [5:0] red_even;
+    wire [5:0] green_even;
+    wire [5:0] blue_even;
 
-    reg [17:0] nextColor = 18'b0;
-    reg [17:0] nextColor_even = 18'b0;
+    wire [17:0] nextColor;
+    wire [17:0] nextColor_even;
 
-    reg hsync = 0;
-    reg vsync = 0;
+    wire hsync;
+    wire vsync;
 
-    reg dataenable;
+    wire dataenable;
    
 		
 	//
@@ -76,8 +72,8 @@ module lvds (i_clk_fast, i_clk_div_3_5,
 	//
 	//RX2DATA is (DE, vsync, hsync, blue[5:2])
 	assign RX2DATA[0] = dataenable;
-	assign RX2DATA[1] = hsync;
-	assign RX2DATA[2] = vsync;
+	assign RX2DATA[1] = vsync;
+	assign RX2DATA[2] = hsync;
 	assign RX2DATA[3:6] = blue[5:2];
 
 	//RX1DATA is (blue[1:0], green[5:1])
@@ -92,8 +88,8 @@ module lvds (i_clk_fast, i_clk_div_3_5,
 	// EVEN DATA
 	//
 	assign RX2EDATA[0] = dataenable;
-	assign RX2EDATA[1] = hsync;
-	assign RX2EDATA[2] = vsync;
+	assign RX2EDATA[1] = vsync;
+	assign RX2EDATA[2] = hsync;
 	assign RX2EDATA[3:6] = blue_even[5:2];
 
 	assign RX1EDATA[0:1] = blue_even[1:0];
@@ -102,8 +98,6 @@ module lvds (i_clk_fast, i_clk_div_3_5,
 	assign RX0EDATA[0] = green_even[0];
 	assign RX0EDATA[1:6] = red_even[5:0];
 
-    assign x = (h_current < h_active) ? (h_current + 1) : 0;
-    assign y = (v_current < v_active) ? (v_current) : 0;
 
 
     wire [48:0] din_i = {RX0EDATA, RX1EDATA, RX2EDATA, RX0DATA, RX1DATA, RX2DATA, 7'b1100011};
@@ -126,37 +120,34 @@ module lvds (i_clk_fast, i_clk_div_3_5,
 		.q(o_q) //output [6:0] q
 	);
 
-    reg dataenable_next;
+    assign hsync = (h_current > (h_active + h_sync_offset) & h_current < (h_active + h_sync_offset + h_sync_width)) ? 0 : 1;
+	assign vsync = (v_current > (v_active + v_sync_offset) & v_current < (v_active + v_sync_offset + v_sync_width)) ? 0 : 1;
+
+    assign dataenable = (h_current < h_active) & (v_current < v_active);
+
+    assign x = (h_current < h_active) ? (h_current) : 0;
+    assign y = (v_current < v_active) ? (v_current) : 0;
+
+    assign nextColor = {  color[13:8], color[21:16], color[5:0]};
+    assign nextColor_even = {  color_even[13:8], color_even[21:16], color_even[5:0]};
+
+    assign green = dataenable ? nextColor[17:12] : 8'b0;
+    assign red = dataenable ? nextColor[11:6] : 8'b0;
+    assign blue = dataenable ? nextColor[5:0] : 8'b0;
+
+    assign green_even = dataenable ? nextColor_even[17:12] : 8'b0;
+    assign red_even = dataenable ? nextColor_even[11:6] : 8'b0;
+    assign blue_even = dataenable ? nextColor_even[5:0] : 8'b0;
 
 	// Slot increment
 	always @ (posedge i_clk_div_3_5)
 	begin
 		
-		if(h_current > (h_active + h_sync_offset) & h_current < (h_active + h_sync_offset + h_sync_width))
-			hsync <= 0;
-		else
-			hsync <= 1;
+		//nextColor <= {  color[15:10], color[23:18], color[7:2]};
+		//nextColor_even <= {  color_even[15:10], color_even[23:18], color_even[7:2]};
 
-		if(v_current > (v_active + v_sync_offset) & v_current < (v_active + v_sync_offset + v_sync_width))
-			vsync <= 0;
-		else
-			vsync <= 1;
+        // not shifter, only for X,Y debug
 
-        dataenable_next <= (h_current < h_active) & (v_current < v_active);
-        dataenable <= dataenable_next;
-
-
-
-		nextColor <= {  color[15:10], color[23:18], color[7:2]};
-		nextColor_even <= {  color_even[15:10], color_even[23:18], color_even[7:2]};
-
-        green <= dataenable_next ? nextColor[17:12] : 8'b0;
-        red <= dataenable_next ? nextColor[11:6] : 8'b0;
-        blue <= dataenable_next ? nextColor[5:0] : 8'b0;
-
-        green_even <= dataenable_next ? nextColor_even[17:12] : 8'b0;
-        red_even <= dataenable_next ? nextColor_even[11:6] : 8'b0;
-        blue_even <= dataenable_next ? nextColor_even[5:0] : 8'b0;
 
         if(h_current == (h_active + h_blanking))
         begin
