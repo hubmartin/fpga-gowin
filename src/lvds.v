@@ -128,8 +128,12 @@ module lvds (i_clk_fast, i_clk_div_3_5,
     assign x = (h_current < h_active) ? (h_current) : 0;
     assign y = (v_current < v_active) ? (v_current) : 0;
 
-    assign nextColor = {  color[13:8], color[21:16], color[5:0]};
-    assign nextColor_even = {  color_even[13:8], color_even[21:16], color_even[5:0]};
+    // for,xy debug
+    //assign nextColor = {  color[13:8], color[21:16], color[5:0]};
+    //assign nextColor_even = {  color_even[13:8], color_even[21:16], color_even[5:0]};
+
+    assign nextColor = {  color[15:10], color[23:18], color[7:2]};
+	assign nextColor_even = {  color_even[15:10], color_even[23:18], color_even[7:2]};
 
     assign red = dataenable ? nextColor[11:6] : 8'b0;
     assign green = dataenable ? nextColor[17:12] : 8'b0;
