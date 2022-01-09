@@ -8,9 +8,11 @@
         <File path="src/counter1.v" type="file.verilog" enable="1"/>
         <File path="src/gowin_clkdiv/gowin_clkdiv.v" type="file.verilog" enable="1"/>
         <File path="src/gowin_ddr/gowin_ddr.v" type="file.verilog" enable="1"/>
+        <File path="src/gowin_prom/gowin_prom.v" type="file.verilog" enable="1"/>
         <File path="src/gowin_rpll/gowin_rpll.v" type="file.verilog" enable="1"/>
         <File path="src/lvds.v" type="file.verilog" enable="1"/>
         <File path="src/8bit_counter.cst" type="file.cst" enable="1"/>
         <File path="src/8bit_counter.sdc" type="file.sdc" enable="1"/>
+        <File path="src/memory_init.mi" type="file.other" enable="1"/>
     </FileList>
 </Project>
