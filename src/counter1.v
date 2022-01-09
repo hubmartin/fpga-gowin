@@ -48,12 +48,45 @@ lvds my_lvds (
 
 reg [35:0] x_counter = 0;
 
+wire [6:0] char = x[9:3];
+
+wire [127:0] rom_dout;
+
+    Gowin_pROM rom_instance(
+        .dout(rom_dout), //output [127:0] dout
+        .clk(clk_3_5), //input clk
+        .oce(1'b1), //input oce
+        .ce(1'b1), //input ce
+        .reset(1'b0), //input reset
+        .ad(char) //input [6:0] ad
+    );
+
+// swap X direction by subtraction
+wire [6:0] bitpos = {y[4:1], (3'd8 - x[2:0])};
+
 always @(posedge clk_3_5)
 begin
 /*
     r_color <= {x[7:0], y[7:0], 8'b00000000};
     r_color_even <= {x[7:0], y[7:0], 8'b00000000};
 */
+
+ 
+
+    if(rom_dout[bitpos+:1])
+    begin
+        r_color <= 24'hFFFFFF;
+        r_color_even <= 24'hFFFFFF;
+    end
+    else
+    begin
+        r_color <= 24'h000000;
+        r_color_even <= 24'h000000;
+    end
+
+
+/*
+
 
     x_counter <= x_counter + 1;
   
@@ -92,7 +125,7 @@ begin
         r_color <= 24'h00FF00;
         r_color_even <= 24'h00FF00;
     end
-
+*/
 end
 
 assign o_clk = clk_3_5;

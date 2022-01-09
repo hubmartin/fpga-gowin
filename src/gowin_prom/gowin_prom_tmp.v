@@ -4,14 +4,18 @@
 //GOWIN Version: V1.9.8
 //Part Number: GW1NR-LV9QN88C6/I5
 //Device: GW1NR-9
-//Created Time: Sat Jan  8 22:40:27 2022
+//Created Time: Sun Jan  9 21:01:54 2022
 
 //Change the instance name and port connections to the signal names
 //--------Copy here to design--------
 
-    Gowin_rPLL your_instance_name(
-        .clkout(clkout_o), //output clkout
-        .clkin(clkin_i) //input clkin
+    Gowin_pROM your_instance_name(
+        .dout(dout_o), //output [127:0] dout
+        .clk(clk_i), //input clk
+        .oce(oce_i), //input oce
+        .ce(ce_i), //input ce
+        .reset(reset_i), //input reset
+        .ad(ad_i) //input [6:0] ad
     );
 
 //--------Copy end-------------------
