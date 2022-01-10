@@ -4,7 +4,7 @@
 //GOWIN Version: 1.9.8
 //Part Number: GW1NR-LV9QN88C6/I5
 //Device: GW1NR-9
-//Created Time: Sun 01 09 20:24:58 2022
+//Created Time: Mon 01 10 21:58:53 2022
 
 IO_LOC "o_q[6]" 17;
 IO_PORT "o_q[6]" IO_TYPE=LVDS25E PULL_MODE=NONE DRIVE=8;
@@ -20,6 +20,8 @@ IO_LOC "o_q[1]" 25;
 IO_PORT "o_q[1]" IO_TYPE=LVDS25E PULL_MODE=NONE DRIVE=8;
 IO_LOC "o_q[0]" 19;
 IO_PORT "o_q[0]" IO_TYPE=LVDS25E PULL_MODE=NONE DRIVE=8;
+IO_LOC "uart_tx" 15;
+IO_PORT "uart_tx" PULL_MODE=UP DRIVE=8;
 IO_PORT "o_lvds_clk" IO_TYPE=LVDS25E;
 IO_LOC "o_clk" 37;
 IO_PORT "o_clk" IO_TYPE=LVCMOS25 PULL_MODE=UP DRIVE=8;
@@ -43,4 +45,6 @@ IO_LOC "i_resetn" 77;
 IO_PORT "i_resetn" PULL_MODE=UP;
 IO_LOC "i_clk" 63;
 IO_PORT "i_clk" IO_TYPE=LVTTL33 PULL_MODE=UP;
+IO_LOC "uart_rx" 16;
+IO_PORT "uart_rx" PULL_MODE=UP;
 CLOCK_LOC "i_clk_d" BUFG = CLK;
