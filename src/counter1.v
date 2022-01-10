@@ -11,7 +11,9 @@
 
 module blinky(input i_clk, input i_resetn, output [7:0] o_led, output o_clk,
               output o_lvds_clk,
-             output [6:0] o_q
+             output [6:0] o_q,
+            input uart_rx,
+            output uart_tx
 );
 
 wire [11:0] x;
@@ -46,9 +48,58 @@ lvds my_lvds (
     .o_q(o_q)
 );
 
+reg uart_transmit = 0;
+wire uart_received;
+reg [7:0] uart_tx_byte = "X";
+wire [7:0] uart_rx_byte;
+
+uart my_uart(
+    .clk(i_clk), // The master clock for this module
+    .rst(~i_resetn), // Synchronous reset.
+    .rx(uart_rx), // Incoming serial line
+    .tx(uart_tx), // Outgoing serial line
+    .transmit(uart_transmit), // Signal to transmit
+    .tx_byte(uart_tx_byte), // Byte to transmit
+    .received(uart_received), // Indicated that a byte has been received.
+    .rx_byte(uart_rx_byte) // Byte received
+   /* output is_receiving, // Low when receive line is idle.
+    output is_transmitting, // Low when transmit line is idle.
+    output recv_error // Indicates error in receiving packet.*/
+    );
+
+
+// UART counter
+reg uart_tx_flag = 1'b0;
+
+reg	[31:0]	uart_counter;
+always @(posedge i_clk)
+begin
+    uart_counter <= uart_counter + 1'b1;
+
+    if(uart_counter[25] == 1'b1)
+    begin
+        if(uart_tx_flag == 1'b0)
+        begin
+            uart_transmit <= 1'b1;
+            uart_tx_flag <= 1'b1;
+        end
+        else
+            uart_transmit <= 1'b0;
+    end
+    else
+        uart_tx_flag <= 1'b0;
+end
+
+always @(posedge i_clk)
+begin
+    if(uart_received)
+        char <= uart_rx_byte;
+end
+
 reg [35:0] x_counter = 0;
 
-wire [6:0] char = x[9:3];
+//wire [6:0] char = x[9:3];
+reg [6:0] char = 8'h41;
 
 wire [127:0] rom_dout;
 
@@ -135,8 +186,12 @@ assign o_lvds_clk = clk_3_5;
 reg	[31:0]	counter;
 always @(posedge clk_sys)
 begin
-  counter <= counter + 1'b1;
+    counter <= counter + 1'b1;
+
+   
 end
+
+
 
 assign o_led[7:0] = counter[31:25];
 
